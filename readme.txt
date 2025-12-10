@@ -9,7 +9,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A standalone PesaPal payment integration plugin for WordPress — works without WooCommerce.
-Includes shortcode [pesapal_payment_form] for embedding a payment form, IPN registration, admin transactions list, CSV export, and popup checkout flow.
+Includes shortcode [pesapal_payment_form] for embedding a payment form, IPN registration, admin transactions list, CSV export, and checkout flow.
 
 == Description ==
 This plugin provides a simple standalone integration with PesaPal (no WooCommerce dependency).
