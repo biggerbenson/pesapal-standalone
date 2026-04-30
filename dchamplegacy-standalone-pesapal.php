@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name:       Dchamplegacy Standalone Payments for PesaPal
- * Plugin URI:        https://dchamplegacy.com/pesapal-standalone
+ * Plugin URI:        https://wordpress.org/plugins/dchamplegacy-standalone-pesapal/
  * Description:       Standalone payment integration with the PesaPal API (not affiliated with PesaPal). No WooCommerce required. Admin UI, IPN registration, payment shortcode, and transaction logs.
- * Version:           1.4.11
+ * Version:           1.4.12
  * Author:            Dchamp Legacy
  * Author URI:        https://dchamplegacy.com
  * License:           GPLv2 or later
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DCSLPS_VERSION', '1.4.11' );
+define( 'DCSLPS_VERSION', '1.4.12' );
 define( 'DCSLPS_PLUGIN_FILE', __FILE__ );
 
 /**

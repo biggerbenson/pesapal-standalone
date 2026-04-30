@@ -3,7 +3,7 @@ Contributors: biggerbenson, dchamp-legacy
 Tags: payments, gateway, shortcode, ipn, uganda
 Requires at least: 5.0
 Tested up to: 6.9.4
-Stable tag: 1.4.11
+Stable tag: 1.4.12
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,9 @@ You must enter your PesaPal Consumer Key and Secret in settings (credentials are
 
 Plugin URL:
 https://dchamplegacy.com/plugins/pesapal-standalone/
+
+WordPress.org URL:
+https://wordpress.org/plugins/dchamplegacy-standalone-pesapal/
 
 Author:
 https://dchamplegacy.com/
@@ -112,6 +115,11 @@ Use [dcslps_payment_form]. The old [pesapal_payment_form] shortcode is no longer
 
 == Changelog ==
 
+= 1.4.12 =
+* Plugin header URL now points to the WordPress.org plugin page.
+* Description now includes both WordPress.org plugin URL and author website plugin URL.
+* Improved GitHub README content for consistency with directory documentation.
+
 = 1.4.11 =
 * Improved readme tabs (Description, Installation, Screenshots, FAQ) for clearer onboarding.
 * Added guidance for reliable WordPress.org auto-updates (correct plugin slug/path).
@@ -144,6 +152,9 @@ Use [dcslps_payment_form]. The old [pesapal_payment_form] shortcode is no longer
 * Prior release under the previous plugin name.
 
 == Upgrade Notice ==
+
+= 1.4.12 =
+Metadata/docs update: plugin URL now points to WordPress.org; description keeps author website plugin URL.
 
 = 1.4.11 =
 Improved onboarding docs and added an in-plugin notice when installation path may prevent WordPress.org auto-updates.
