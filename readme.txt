@@ -2,17 +2,17 @@
 Contributors: biggerbenson, dchamp-legacy
 Tags: payments, gateway, shortcode, ipn, uganda
 Requires at least: 5.0
-Tested up to: 6.9
-Stable tag: 1.4.10
+Tested up to: 6.9.4
+Stable tag: 1.4.11
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Third-party PesaPal payments for WordPress: shortcode form, IPN, and logs. Not affiliated with PesaPal. Works without WooCommerce.
+Accept PesaPal payments in WordPress without WooCommerce: hosted checkout, IPN registration, status callbacks, and admin transaction logs.
 
 == Description ==
 
-This plugin lets WordPress sites accept payments through the PesaPal payment platform without WooCommerce. It is an independent integration and is **not** affiliated with, endorsed by, or sponsored by PesaPal Ltd.
+This plugin lets WordPress sites accept payments through the PesaPal payment platform without WooCommerce. It is an independent integration and is not affiliated with, endorsed by, or sponsored by PesaPal Ltd.
 
 Features:
 
@@ -23,6 +23,13 @@ Features:
 * Sandbox / Live mode
 * Success / Failed redirect pages
 * Works without WooCommerce
+
+Recommended setup:
+
+* Install directly from WordPress.org (Plugins -> Add New -> search for "Dchamplegacy Standalone Payments for PesaPal") for automatic update checks.
+* Keep the plugin in the default WordPress.org slug path:
+  `dchamplegacy-standalone-pesapal/dchamplegacy-standalone-pesapal.php`
+  so WordPress can match and apply updates automatically.
 
 Shortcode:
 
@@ -59,12 +66,25 @@ Links (verify before each release):
 
 == Installation ==
 
-1. Upload the plugin folder to /wp-content/plugins/
-2. Activate the plugin
-3. In the admin menu, open PesaPal → Settings (screen title: Dchamp Legacy Standalone PesaPal Payments)
-4. Enter Consumer Key and Secret
-5. Register the IPN URL shown on the settings screen with your payment provider
-6. Add the shortcode [dcslps_payment_form] to any page or post
+1. Install from WordPress admin:
+   Plugins -> Add New -> search for "Dchamplegacy Standalone Payments for PesaPal" -> Install -> Activate.
+2. Open PesaPal -> Settings (screen title: Dchamp Legacy Standalone PesaPal Payments).
+3. Enter your PesaPal Consumer Key and Consumer Secret.
+4. Choose mode (Sandbox for testing, Live for production).
+5. Click IPN Register to register the generated IPN URL with PesaPal.
+6. Add shortcode [dcslps_payment_form] to a page/post where you want to collect payments.
+7. Complete one sandbox test payment and confirm it appears under PesaPal -> Transactions.
+
+Manual ZIP installation (advanced):
+
+* If you install manually, keep the plugin folder as `dchamplegacy-standalone-pesapal`.
+* If the folder/file slug differs, WordPress.org auto-updates may not be detected.
+
+== Screenshots ==
+
+1. Plugin settings page (API credentials, mode, notification ID, and IPN register button).
+2. Frontend shortcode payment form.
+3. Admin transactions list with status tracking.
 
 == Frequently Asked Questions ==
 
@@ -83,7 +103,19 @@ That tag is no longer registered (WordPress.org prefix rules). Replace it with [
 = Can I export transactions? =
 Transactions are listed under PesaPal → Transactions in the admin menu. This release does not ship a CSV export in the plugin code.
 
+= How do I make sure automatic updates work from WordPress.org? =
+Install from WordPress.org and keep the default plugin slug:
+`dchamplegacy-standalone-pesapal/dchamplegacy-standalone-pesapal.php`.
+
+= Which shortcode should I use? =
+Use [dcslps_payment_form]. The old [pesapal_payment_form] shortcode is no longer registered.
+
 == Changelog ==
+
+= 1.4.11 =
+* Improved readme tabs (Description, Installation, Screenshots, FAQ) for clearer onboarding.
+* Added guidance for reliable WordPress.org auto-updates (correct plugin slug/path).
+* Plugin now shows an admin warning if installed under a non-standard folder/file name that can block wp.org updates.
 
 = 1.4.10 =
 * Readme: added `External services` section documenting PesaPal API usage, data sent, endpoints, and links to PesaPal terms and privacy policy (WordPress.org guideline).
@@ -112,6 +144,9 @@ Transactions are listed under PesaPal → Transactions in the admin menu. This r
 * Prior release under the previous plugin name.
 
 == Upgrade Notice ==
+
+= 1.4.11 =
+Improved onboarding docs and added an in-plugin notice when installation path may prevent WordPress.org auto-updates.
 
 = 1.4.10 =
 Documentation only: external services disclosure in readme.

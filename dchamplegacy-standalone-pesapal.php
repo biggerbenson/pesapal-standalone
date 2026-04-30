@@ -3,7 +3,7 @@
  * Plugin Name:       Dchamplegacy Standalone Payments for PesaPal
  * Plugin URI:        https://dchamplegacy.com/pesapal-standalone
  * Description:       Standalone payment integration with the PesaPal API (not affiliated with PesaPal). No WooCommerce required. Admin UI, IPN registration, payment shortcode, and transaction logs.
- * Version:           1.4.10
+ * Version:           1.4.11
  * Author:            Dchamp Legacy
  * Author URI:        https://dchamplegacy.com
  * License:           GPLv2 or later
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DCSLPS_VERSION', '1.4.10' );
+define( 'DCSLPS_VERSION', '1.4.11' );
 define( 'DCSLPS_PLUGIN_FILE', __FILE__ );
 
 /**
@@ -245,6 +245,7 @@ class DCSLPS_Standalone_Plugin {
 	private $settings_group = 'dcslps_settings_group';
 	private $option_name    = 'dcslps_standalone_options';
 	private $table;
+	private $wporg_slug      = 'dchamplegacy-standalone-pesapal/dchamplegacy-standalone-pesapal.php';
 
 	public function __construct() {
 		global $wpdb;
@@ -253,6 +254,7 @@ class DCSLPS_Standalone_Plugin {
 		add_action( 'plugins_loaded', array( $this, 'maybe_upgrade_schema' ), 1 );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_show_wporg_updates_notice' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'init', array( $this, 'maybe_handle_callback_or_ipn' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
@@ -287,6 +289,26 @@ class DCSLPS_Standalone_Plugin {
 			'dcslps-transactions',
 			array( $this, 'render_transactions_page' )
 		);
+	}
+
+	public function maybe_show_wporg_updates_notice() {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
+		$current_basename = plugin_basename( DCSLPS_PLUGIN_FILE );
+		if ( $current_basename === $this->wporg_slug ) {
+			return;
+		}
+
+		echo '<div class="notice notice-warning"><p>';
+		echo esc_html__( 'Automatic updates from WordPress.org may not work because this plugin is installed with a different folder/file name.', 'dchamplegacy-standalone-pesapal' );
+		echo ' ';
+		echo esc_html__( 'For reliable updates, install/keep it as:', 'dchamplegacy-standalone-pesapal' );
+		echo ' <code>' . esc_html( $this->wporg_slug ) . '</code>.';
+		echo ' ';
+		echo esc_html__( 'You can reinstall from Plugins > Add New by searching for "Dchamplegacy Standalone Payments for PesaPal".', 'dchamplegacy-standalone-pesapal' );
+		echo '</p></div>';
 	}
 
 	public function admin_enqueue_scripts( $hook_suffix ) {
