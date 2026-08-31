@@ -2,8 +2,8 @@
 Contributors: biggerbenson, dchamp-legacy
 Tags: payments, gateway, shortcode, ipn, uganda
 Requires at least: 5.0
-Tested up to: 6.9.4
-Stable tag: 1.4.12
+Tested up to: 7.1
+Stable tag: 1.4.14
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -85,9 +85,16 @@ Manual ZIP installation (advanced):
 
 == Screenshots ==
 
-1. Plugin settings page (API credentials, mode, notification ID, and IPN register button).
-2. Frontend shortcode payment form.
-3. Admin transactions list with status tracking.
+1. Frontend payment form from the [dcslps_payment_form] shortcode: amount, currency, email, optional phone, name, Pay button, and supported methods (M-PESA, MTN MoMo, cards, Airtel Money).
+2. Frontend payment form with the currency dropdown open (KES, UGX, TZS, RWF, ZMW, ZAR, GHS, NGN, USD, EUR, GBP, AUD).
+3. PesaPal hosted checkout: choose a payment option (MTN Mobile Money, Airtel Money, cards, or wallet) and enter a mobile money number.
+4. PesaPal hosted checkout after an Airtel Money prompt is sent: confirm PIN on the phone, resend prompt, Proceed, or Cancel Request.
+5. Payment Failed redirect page: retry options, WhatsApp/email support, and common questions.
+6. Payment Successful redirect page: next steps, print/support actions, and receipt FAQs.
+7. Admin settings: Consumer Key and Secret, Live/Sandbox mode, default currency, notification ID, success/failed pages, and Register IPN URL.
+8. Admin settings: shortcode usage plus the site Callback URL and IPN URL used with PesaPal.
+9. Admin debug panels: last token response, submit attempts, and transaction status attempts from the PesaPal API.
+10. Plugin overview: standalone PesaPal payments without WooCommerce (secure, fast checkout).
 
 == Frequently Asked Questions ==
 
@@ -114,6 +121,17 @@ Install from WordPress.org and keep the default plugin slug:
 Use [dcslps_payment_form]. The old [pesapal_payment_form] shortcode is no longer registered.
 
 == Changelog ==
+
+= 1.4.14 =
+* Tested up to WordPress 7.1.
+* Confirmed the payment shortcode editor placeholder with the always-iframed post editor in WordPress 7.1.
+* Updated WordPress.org screenshot captions to match all ten gallery images.
+
+= 1.4.13 =
+* Tested up to WordPress 7.0.
+* Admin screens styled for the Modern admin color scheme (WP 7.0 default).
+* Payment shortcode shows a safe placeholder in the block editor and preview contexts (WP 7.0 iframed editor compatibility).
+* Restored bundled payment-methods image asset and corrected its path for the shortcode form.
 
 = 1.4.12 =
 * Plugin header URL now points to the WordPress.org plugin page.
@@ -152,6 +170,12 @@ Use [dcslps_payment_form]. The old [pesapal_payment_form] shortcode is no longer
 * Prior release under the previous plugin name.
 
 == Upgrade Notice ==
+
+= 1.4.14 =
+WordPress 7.1 compatibility: tested up to 7.1; payment form placeholder works in the always-iframed post editor.
+
+= 1.4.13 =
+WordPress 7.0 compatibility: Modern admin styling, block editor preview placeholder, tested up to 7.0.
 
 = 1.4.12 =
 Metadata/docs update: plugin URL now points to WordPress.org; description keeps author website plugin URL.

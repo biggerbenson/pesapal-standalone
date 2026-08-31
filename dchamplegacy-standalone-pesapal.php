@@ -3,7 +3,9 @@
  * Plugin Name:       Dchamplegacy Standalone Payments for PesaPal
  * Plugin URI:        https://wordpress.org/plugins/dchamplegacy-standalone-pesapal/
  * Description:       Standalone payment integration with the PesaPal API (not affiliated with PesaPal). No WooCommerce required. Admin UI, IPN registration, payment shortcode, and transaction logs.
- * Version:           1.4.12
+ * Version:           1.4.14
+ * Requires at least: 5.0
+ * Requires PHP:      7.4
  * Author:            Dchamp Legacy
  * Author URI:        https://dchamplegacy.com
  * License:           GPLv2 or later
@@ -18,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DCSLPS_VERSION', '1.4.12' );
+define( 'DCSLPS_VERSION', '1.4.14' );
 define( 'DCSLPS_PLUGIN_FILE', __FILE__ );
 
 /**
@@ -312,9 +314,23 @@ class DCSLPS_Standalone_Plugin {
 	}
 
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		if ( 'toplevel_page_dcslps-standalone' !== $hook_suffix ) {
+		$plugin_pages = array(
+			'toplevel_page_dcslps-standalone',
+			'pesapal_page_dcslps-standalone',
+			'pesapal_page_dcslps-transactions',
+		);
+		if ( ! in_array( $hook_suffix, $plugin_pages, true ) ) {
 			return;
 		}
+
+		wp_register_style( 'dcslps-admin', false, array(), DCSLPS_VERSION );
+		wp_enqueue_style( 'dcslps-admin' );
+		wp_add_inline_style( 'dcslps-admin', $this->get_admin_inline_css() );
+
+		if ( 'pesapal_page_dcslps-transactions' === $hook_suffix ) {
+			return;
+		}
+
 		wp_register_script( 'dcslps-admin-ipn', false, array(), DCSLPS_VERSION, true );
 		wp_enqueue_script( 'dcslps-admin-ipn' );
 		wp_add_inline_script(
@@ -335,18 +351,18 @@ class DCSLPS_Standalone_Plugin {
         .then(function(json){
           btn.disabled = false;
           if (json.success) {
-            result.innerHTML = "<span style=\"color:green\">Registered: " + (json.data.notification_id || "") + "</span>";
+            result.innerHTML = "<span class=\"dcslps-admin-success\">Registered: " + (json.data.notification_id || "") + "</span>";
             var input = document.getElementById("dcslps_notification_id_input");
             if (input) input.value = json.data.notification_id || "";
           } else {
-            result.innerHTML = "<span style=\"color:#b94a48\">Error: " + (json.data && json.data.message ? json.data.message : "Unknown") + "</span>";
+            result.innerHTML = "<span class=\"dcslps-admin-error\">Error: " + (json.data && json.data.message ? json.data.message : "Unknown") + "</span>";
             if (json.data && json.data.debug) {
               result.innerHTML += " <em>Debug saved in settings</em>";
             }
           }
         }).catch(function(err){
           btn.disabled = false;
-          result.innerHTML = "<span style=\"color:#b94a48\">Request error: "+ err +"</span>";
+          result.innerHTML = "<span class=\"dcslps-admin-error\">Request error: "+ err +"</span>";
         });
       });
     })();'
@@ -560,7 +576,7 @@ class DCSLPS_Standalone_Plugin {
 		echo '<p>' . esc_html__( 'Register your IPN (callback) URL with the payment provider. Click the button below to register and store the returned notification_id.', 'dchamplegacy-standalone-pesapal' ) . '</p>';
 		echo '<button type="button" class="button button-primary" id="dcslps-register-ipn-btn">' . esc_html__( 'Register IPN URL', 'dchamplegacy-standalone-pesapal' ) . '</button>';
 		echo '&nbsp;<span id="dcslps-register-result" style="margin-left:12px;"></span>';
-		echo '<div style="margin-top:8px;color:#666;font-size:13px;">' . esc_html__( 'Last token response (debug): option', 'dchamplegacy-standalone-pesapal' ) . ' <code>dcslps_last_token_response</code></div>';
+		echo '<div style="margin-top:8px;" class="description">' . esc_html__( 'Last token response (debug): option', 'dchamplegacy-standalone-pesapal' ) . ' <code>dcslps_last_token_response</code></div>';
 	}
 
 	public function settings_page() {
@@ -583,16 +599,16 @@ class DCSLPS_Standalone_Plugin {
 
 		<h2><?php echo esc_html__( 'Debug info', 'dchamplegacy-standalone-pesapal' ); ?></h2>
 		<p><?php echo esc_html__( 'Last token responses are stored in option', 'dchamplegacy-standalone-pesapal' ); ?> <code>dcslps_last_token_response</code>.</p>
-		<pre style="background:#fff;border:1px solid #eee;padding:10px;"><?php echo esc_html( get_option( 'dcslps_last_token_response', '(none)' ) ); ?></pre>
+		<pre class="dcslps-debug-panel"><?php echo esc_html( get_option( 'dcslps_last_token_response', '(none)' ) ); ?></pre>
 
 		<h2><?php echo esc_html__( 'Last Submit attempts', 'dchamplegacy-standalone-pesapal' ); ?></h2>
-		<pre style="background:#fff;border:1px solid #eee;padding:10px;"><?php echo esc_html( get_option( 'dcslps_last_submit_attempts', '(none)' ) ); ?></pre>
+		<pre class="dcslps-debug-panel"><?php echo esc_html( get_option( 'dcslps_last_submit_attempts', '(none)' ) ); ?></pre>
 
 		<h2><?php echo esc_html__( 'Last Status attempts', 'dchamplegacy-standalone-pesapal' ); ?></h2>
-		<pre style="background:#fff;border:1px solid #eee;padding:10px;"><?php echo esc_html( get_option( 'dcslps_last_status_attempts', '(none)' ) ); ?></pre>
+		<pre class="dcslps-debug-panel"><?php echo esc_html( get_option( 'dcslps_last_status_attempts', '(none)' ) ); ?></pre>
 
 		<h2><?php echo esc_html__( 'Last IPN error (if any)', 'dchamplegacy-standalone-pesapal' ); ?></h2>
-		<pre style="background:#fff;border:1px solid #eee;padding:10px;"><?php echo esc_html( get_option( 'dcslps_last_ipn_error', '(none)' ) ); ?></pre>
+		<pre class="dcslps-debug-panel"><?php echo esc_html( get_option( 'dcslps_last_ipn_error', '(none)' ) ); ?></pre>
 	</div>
 		<?php
 	}
@@ -959,6 +975,53 @@ class DCSLPS_Standalone_Plugin {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
+	private function get_admin_inline_css() {
+		return '.dcslps-debug-panel { background: var(--dcslps-admin-surface, #fff); border: 1px solid var(--dcslps-admin-border, #c3c4c7); padding: 10px; overflow: auto; max-height: 320px; }
+    .dcslps-admin-success { color: var(--dcslps-admin-success, #008a20); }
+    .dcslps-admin-error { color: var(--dcslps-admin-error, #b32d2e); }
+    .dcslps-editor-placeholder { max-width: 640px; margin: 18px auto; padding: 18px; border: 1px dashed var(--dcslps-admin-border, #c3c4c7); border-radius: 8px; background: var(--dcslps-admin-surface, #fff); text-align: center; }';
+	}
+
+	/**
+	 * Whether the payment shortcode should render the live form (not admin/editor preview).
+	 *
+	 * @return bool
+	 */
+	private function should_render_payment_form() {
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return false;
+		}
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return false;
+		}
+		if ( is_preview() ) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Static placeholder shown in the block editor and other non-checkout contexts.
+	 *
+	 * @param array<string,string> $atts Shortcode attributes.
+	 * @return string
+	 */
+	private function get_editor_placeholder( $atts ) {
+		wp_register_style( 'dcslps-admin', false, array(), DCSLPS_VERSION );
+		wp_enqueue_style( 'dcslps-admin' );
+		wp_add_inline_style( 'dcslps-admin', $this->get_admin_inline_css() );
+
+		$amount   = '' !== ( $atts['amount'] ?? '' ) ? $atts['amount'] : '—';
+		$currency = $atts['currency'] ?? ( $this->get_options()['default_currency'] ?? 'KES' );
+
+		return '<div class="dcslps-editor-placeholder"><p><strong>' . esc_html__( 'PesaPal payment form', 'dchamplegacy-standalone-pesapal' ) . '</strong></p><p>' . esc_html__( 'This form is displayed on the front end only.', 'dchamplegacy-standalone-pesapal' ) . '</p><p><code>[dcslps_payment_form]</code> — ' . esc_html( sprintf(
+			/* translators: 1: amount, 2: currency code. */
+			__( 'Amount: %1$s %2$s', 'dchamplegacy-standalone-pesapal' ),
+			$amount,
+			$currency
+		) ) . '</p></div>';
+	}
+
 	private function get_payment_form_inline_css() {
 		return '.dcslps-form { max-width:640px; width:100%; margin:18px auto; background:var(--dcslps-bg,#fff); border:1px solid var(--dcslps-border,#e6e6e6); padding:18px; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,0.04); box-sizing:border-box; }
     .dcslps-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:start; }
@@ -984,6 +1047,20 @@ class DCSLPS_Standalone_Plugin {
 	}
 
 	public function shortcode_payment_form( $atts = array() ) {
+		$atts = shortcode_atts(
+			array(
+				'amount'      => '',
+				'currency'    => $this->get_options()['default_currency'] ?? 'KES',
+				'description' => 'Payment',
+			),
+			$atts,
+			'dcslps_payment_form'
+		);
+
+		if ( ! $this->should_render_payment_form() ) {
+			return $this->get_editor_placeholder( $atts );
+		}
+
 		wp_register_style( 'dcslps-payment-form', false, array(), DCSLPS_VERSION );
 		wp_enqueue_style( 'dcslps-payment-form' );
 		wp_add_inline_style( 'dcslps-payment-form', $this->get_payment_form_inline_css() );
@@ -1050,16 +1127,6 @@ class DCSLPS_Standalone_Plugin {
 			'after'
 		);
 
-		$atts = shortcode_atts(
-			array(
-				'amount'      => '',
-				'currency'    => $this->get_options()['default_currency'] ?? 'KES',
-				'description' => 'Payment',
-			),
-			$atts,
-			'dcslps_payment_form'
-		);
-
 		ob_start();
 		$form_id = 'dcslps-form-' . sanitize_html_class( uniqid( '', true ) );
 		?>
@@ -1114,7 +1181,7 @@ class DCSLPS_Standalone_Plugin {
 		</div>
 
 		<div class="dcslps-full dcslps-icons">
-			<img src="<?php echo esc_url( plugins_url( 'Payments.png', DCSLPS_PLUGIN_FILE ) ); ?>" alt="<?php echo esc_attr__( 'Supported payment methods', 'dchamplegacy-standalone-pesapal' ); ?>">
+			<img src="<?php echo esc_url( plugins_url( 'assets/Payments.png', DCSLPS_PLUGIN_FILE ) ); ?>" alt="<?php echo esc_attr__( 'Supported payment methods', 'dchamplegacy-standalone-pesapal' ); ?>">
 		</div>
 
 		</div>
